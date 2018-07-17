@@ -21,7 +21,8 @@ esc_pressed = False
 
 mouse = Controller()
 
-print('The current pointer position is {0}'.format(mouse.position))
+def get_position():
+	print('The current pointer position is {0}'.format(mouse.position))
 
 
 def position_mouse(x, y):
