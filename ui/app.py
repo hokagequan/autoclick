@@ -1,3 +1,5 @@
+from tkinter import *
+from tkinter import font
 import tkinter as tk
 
 
@@ -39,7 +41,7 @@ class Application(tk.Frame):
         left_top = Point(left_top_x, left_top_y)
 
         # Phone container
-        phone_window = tk.Frame(self, bg="red", width=window_size.width / 2, height=window_size.height)
+        phone_window = tk.Frame(self, bg="systemTransparent", width=window_size.width / 2, height=window_size.height)
         phone_window.pack(side=tk.LEFT)
 
         # Phone position
@@ -47,10 +49,27 @@ class Application(tk.Frame):
         canvas.place(x=0, y=0)
         canvas.create_rectangle(left_top.x, left_top.y, left_top.x + phone_size.width, left_top.y + phone_size.height, dash=(10, 6), outline="green", width=3)
         canvas.pack()
+
+        # Phone prompt
+        phone_prompt_lab_pos_x = phone_window_size.width / 2
+        phone_prompt_lab_pos_y = phone_window_size.height / 2
+        phone_prompt_lab_font = font.Font(size="30")
+        phone_prompt_lab = tk.Label(phone_window, text="将模拟器放置虚线以内")
+        phone_prompt_lab.config(bg="systemTransparent", fg="gray", font=phone_prompt_lab_font)
+        phone_prompt_lab.place(x=phone_prompt_lab_pos_x, y=phone_prompt_lab_pos_y, anchor="center")
         
         # Operation panel
         op_frame = tk.Frame(self, width=window_size.width / 2, height=window_size.height)
         op_frame.pack(side=tk.LEFT)
+
+        # App options
+        options = ("聚看点",)
+        default_op = tk.StringVar()
+        default_op.set(options[0])
+        self.app_options = tk.OptionMenu(op_frame, default_op, *options)
+        self.app_options.place(x=0, y=0)
+
+        # Buttons
 
         # self.hi_there = tk.Button(self)
         # self.hi_there["text"] = "Hello World\n(click me)"
