@@ -5,6 +5,7 @@ sys.path.append("..")
 
 from core import drive
 # from core import mouse
+        
 
 
 click_point = (150, 200)
