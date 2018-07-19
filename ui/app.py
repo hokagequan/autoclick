@@ -59,7 +59,7 @@ class Application(tk.Frame):
         phone_prompt_lab.place(x=phone_prompt_lab_pos_x, y=phone_prompt_lab_pos_y, anchor="center")
         
         # Operation panel
-        op_frame = tk.Frame(self, width=window_size.width / 2, height=window_size.height)
+        op_frame = tk.Frame(self, width=phone_window_size.width, height=phone_window_size.height)
         op_frame.pack(side=tk.LEFT)
 
         # App options
@@ -69,7 +69,28 @@ class Application(tk.Frame):
         self.app_options = tk.OptionMenu(op_frame, default_op, *options)
         self.app_options.place(x=0, y=0)
 
+        # Buttons container
+        btn_frame = tk.Frame(op_frame, width=phone_window_size.width, height=120)
+        btn_frame.place(x=0, y=phone_window_size.height, anchor="sw")
+
         # Buttons
+        def click_start():
+            print("hi there, everyone!")
+        
+        start_btn_pos_x = phone_window_size.width - 50
+        start_btn_pos_y = 50
+        start_btn = tk.Button(btn_frame, text="开始", command=click_start)
+        start_btn.config(anchor="se")
+        print("{}-{}".format(start_btn_pos_x, start_btn_pos_y))
+        start_btn.place(x=start_btn_pos_x, y=start_btn_pos_y, anchor="se")
+
+        def click_stop():
+            print("stop")
+        
+        stop_btn_pos_x = start_btn_pos_x - 60
+        stop_btn_pos_y = start_btn_pos_y
+        stop_btn = tk.Button(btn_frame, text="停止", command=click_stop)
+        stop_btn.place(x=stop_btn_pos_x, y=stop_btn_pos_y, anchor="se")
 
         # self.hi_there = tk.Button(self)
         # self.hi_there["text"] = "Hello World\n(click me)"
@@ -80,8 +101,6 @@ class Application(tk.Frame):
         #                       command=root.destroy)
         # self.quit.pack(side="bottom")
 
-    def say_hi(self):
-        print("hi there, everyone!")
 
 root = tk.Tk()
 app = Application(master=root)
