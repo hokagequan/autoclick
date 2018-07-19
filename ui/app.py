@@ -74,22 +74,16 @@ class Application(tk.Frame):
         btn_frame.place(x=0, y=phone_window_size.height, anchor="sw")
 
         # Buttons
-        def click_start():
-            print("hi there, everyone!")
-        
         start_btn_pos_x = phone_window_size.width - 50
         start_btn_pos_y = 50
-        start_btn = tk.Button(btn_frame, text="开始", command=click_start)
+        start_btn = tk.Button(btn_frame, text="开始", command=self.click_start)
         start_btn.config(anchor="se")
         print("{}-{}".format(start_btn_pos_x, start_btn_pos_y))
         start_btn.place(x=start_btn_pos_x, y=start_btn_pos_y, anchor="se")
-
-        def click_stop():
-            print("stop")
         
         stop_btn_pos_x = start_btn_pos_x - 60
         stop_btn_pos_y = start_btn_pos_y
-        stop_btn = tk.Button(btn_frame, text="停止", command=click_stop)
+        stop_btn = tk.Button(btn_frame, text="停止", command=self.click_stop)
         stop_btn.place(x=stop_btn_pos_x, y=stop_btn_pos_y, anchor="se")
 
         # self.hi_there = tk.Button(self)
@@ -100,6 +94,12 @@ class Application(tk.Frame):
         # self.quit = tk.Button(self, text="QUIT", fg="red",
         #                       command=root.destroy)
         # self.quit.pack(side="bottom")
+
+    def click_start(self):
+            print("hi there, everyone!")
+
+    def click_stop(self):
+            print("stop")
 
 
 root = tk.Tk()
