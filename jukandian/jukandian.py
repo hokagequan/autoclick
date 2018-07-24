@@ -3,56 +3,79 @@ import threading
 import time
 sys.path.append("..")
 
-from core import drive
-
-click_point = (170, 180)
-# back_point = (40, 1050)
-back_point = (30, 100)
-refresh_point = (35, 670)
-move_distance = (5, 10)
-
-def scroll(times, distance, direction):
-	for x in range(times):
-		time.sleep(10)
-		drive.scroll_mouse(0, distance * direction)
-
-def fake_read():
-	for x in range(1):
-		p = list(move_distance)
-		p.append(-1 if x % 2 == 0 else 1)
-		scroll(*p)
+from core import drive, worker
+from core.models import Point, Size
 
 
-def work():
-	while not drive.esc_pressed:
-		time.sleep(4)
+class JukandianWorker(worker.AppWorker):
+    """docstring for JukandianWorker"""
+    def start(self):
+        self.cancel = False
 
-		# drive.get_position()
+        t = threading.Thread(target=self.work)
+        t.start()
 
-		drive.position_mouse(*click_point)
-		time.sleep(2)
-		drive.click()
+    def stop(self):
+        self.cancel = True
 
-		fake_read()
+    def work(self):
+        click_point = self.coord_maker.get_click_point().to_tuple()
+        back_point = self.coord_maker.get_back_point().to_tuple()
+        refresh_point = self.coord_maker.get_refresh_point().to_tuple()
+        
+        while not self.cancel:
+            print("I am running")
+            time.sleep(4)
 
-		time.sleep(8)
+            if self.cancel:
+            	break
+
+            # drive.get_position()
+
+            drive.position_mouse(*click_point)
+            time.sleep(2)
+            drive.click()
+
+            if self.cancel:
+            	break
+
+            self.fake_read()
+
+            if self.cancel:
+            	break
+
+            time.sleep(8)
+
+            if self.cancel:
+            	break
 		
-		drive.position_mouse(*back_point)
-		time.sleep(2)
-		drive.click()
+            drive.position_mouse(*back_point)
+            time.sleep(2)
+            drive.click()
 
-		time.sleep(2)
-		drive.position_mouse(*refresh_point)
-		time.sleep(2)
-		drive.click()
+            if self.cancel:
+            	break
 
-		time.sleep(8)
+            time.sleep(2)
+            drive.position_mouse(*refresh_point)
+            time.sleep(2)
+            drive.click()
 
+            if self.cancel:
+            	break
 
-def start():
-	t = threading.Thread(target=work)
-	t.start()
-	t.join()
+            time.sleep(8)
 
-if __name__ == '__main__':
-	start()
+    def fake_read(self):
+        move_distance = self.coord_maker.get_move_distance()
+        for x in range(1):
+            p = list(move_distance.to_tuple())
+            p.append(-1 if x % 2 == 0 else 1)
+            self.scroll(*p)
+
+    def scroll(self, times, distance, direction):
+        for x in range(times):
+            time.sleep(10)
+            if self.cancel:
+            	break
+            drive.scroll_mouse(0, distance * direction)	

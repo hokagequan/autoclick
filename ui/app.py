@@ -1,27 +1,19 @@
 from tkinter import *
 from tkinter import font
 import tkinter as tk
+import sys
+sys.path.append("..")
 
-
-class Size(object):
-	"""docstring for Size"""
-	def __init__(self, width, height):
-		super(__class__, self).__init__()
-		self.width = width
-		self.height = height
-
-class Point(object):
-	"""docstring for Point"""
-	def __init__(self, x, y):
-		super(__class__, self).__init__()
-		self.x = x
-		self.y = y
+from jukandian.jukandian import JukandianWorker
+from jukandian.jkd_coord import JukandianCoord
+from core.models import Point, Size
 		
 
-
+root = tk.Tk()
 window_size = Size(1200, 700)
-phone_size = Size(320, 600)
+phone_size = Size(360, 700)
 
+workers_map = {"聚看点": (JukandianWorker, JukandianCoord)}
 
 class Application(tk.Frame):
     def __init__(self, master=None):
@@ -38,7 +30,7 @@ class Application(tk.Frame):
         phone_window_size = Size(window_size.width / 2, window_size.height)
         left_top_x = (phone_window_size.width - phone_size.width) / 2
         left_top_y = (phone_window_size.height - phone_size.height) / 2
-        left_top = Point(left_top_x, left_top_y)
+        self.left_top = Point(left_top_x, left_top_y)
 
         # Phone container
         phone_window = tk.Frame(self, bg="systemTransparent", width=window_size.width / 2, height=window_size.height)
@@ -47,7 +39,7 @@ class Application(tk.Frame):
         # Phone position
         canvas = tk.Canvas(phone_window, width=window_size.width / 2, height=window_size.height, bg="systemTransparent")
         canvas.place(x=0, y=0)
-        canvas.create_rectangle(left_top.x, left_top.y, left_top.x + phone_size.width, left_top.y + phone_size.height, dash=(10, 6), outline="green", width=3)
+        canvas.create_rectangle(self.left_top.x, self.left_top.y, self.left_top.x + phone_size.width, self.left_top.y + phone_size.height, dash=(10, 6), outline="green", width=3)
         canvas.pack()
 
         # Phone prompt
@@ -64,10 +56,10 @@ class Application(tk.Frame):
 
         # App options
         options = ("聚看点",)
-        default_op = tk.StringVar()
-        default_op.set(options[0])
-        self.app_options = tk.OptionMenu(op_frame, default_op, *options)
-        self.app_options.place(x=0, y=0)
+        self.default_op = tk.StringVar()
+        self.default_op.set(options[0])
+        app_options = tk.OptionMenu(op_frame, self.default_op, *options)
+        app_options.place(x=0, y=0)
 
         # Buttons container
         btn_frame = tk.Frame(op_frame, width=phone_window_size.width, height=120)
@@ -95,14 +87,25 @@ class Application(tk.Frame):
         #                       command=root.destroy)
         # self.quit.pack(side="bottom")
 
+    def origin_point(self):
+        window_pos = Point(root.winfo_x(), root.winfo_y())
+        return window_pos + self.left_top
+
+    def mapreduce(self, config, worker_class, coord_class):
+        return worker_class.create_worker(coord_class, config)
+
     def click_start(self):
-            print("hi there, everyone!")
+        o_pos = self.origin_point()
+        print("origin_point: {}".format(o_pos))
+        config = {"origin_point": o_pos, "screen_size": phone_size}
+        info = workers_map[self.default_op.get()]
+        self.worker = self.mapreduce(config, *info)
+        self.worker.start()
 
     def click_stop(self):
-            print("stop")
+        self.worker.stop()
 
 
-root = tk.Tk()
 app = Application(master=root)
 app.master.geometry("1200x700+10+10")
 app.mainloop()
